@@ -6,6 +6,20 @@ Exposes **Codex** (gpt-5.5, gpt-5.4, gpt-5.4-mini, gpt-5.3-codex, gpt-image-2, a
 
 ---
 
+## What changed in this fork
+
+This fork adds and documents a few changes on top of the original project:
+
+- **Image edits / image-to-image** via `POST /v1/images/edits`, using multipart uploads with the `image` field plus a prompt.
+- **Source image upload support** for the ChatGPT `picture_v2` flow, including local proxy URLs for edited image results.
+- **More resilient image generation** when the upstream SSE stream ends early; the service falls back to polling the conversation for generated image references.
+- **Cleaner English README** with installation instructions for this repository and examples for both text-to-image and image-to-image.
+- **Sanitized proxy pool defaults** so the public repository does not ship local proxy credentials or account bindings.
+
+Masks are not supported yet; send `image` plus `prompt` for image-to-image edits.
+
+---
+
 ## Architecture
 
 ![Codex Pro API architecture](architecture-en.png)
