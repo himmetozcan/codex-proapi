@@ -41,12 +41,34 @@ If you prefer not to use the command line:
 
 You need **Node.js** 18 or later. In a terminal:
 
+Install and run from this public repository:
+
+```bash
+git clone https://github.com/himmetozcan/codex-proapi-image-edits.git
+cd codex-proapi-image-edits
+npm install
+npm start
+```
+
+Then open **http://localhost:1455/** in your browser.
+
+You can also install the CLI directly from this GitHub repository:
+
+```bash
+npm install -g github:himmetozcan/codex-proapi-image-edits
+codex-proapi
+```
+
+The default port is **1455**.
+
+Original npm package install:
+
 ```bash
 npm install -g codex-proapi
 codex-proapi
 ```
 
-Or run `npm start` from the project directory after `npm install`. Then open **http://localhost:1455/** in your browser. Default port is **1455**; with global install, account and usage data are stored in `~/.codex-proapi/`.
+Or run `npm start` from the project directory after `npm install`. With global install, account and usage data are stored in `~/.codex-proapi/`.
 
 ---
 
