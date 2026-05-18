@@ -1,0 +1,151 @@
+# Codex Pro API
+
+将 **Codex**（gpt-5.5、gpt-5.4、gpt-5.4-mini、gpt-5.3-codex、gpt-image-2 等）以 **OpenAI 兼容 API** 形式暴露，可在 Cline、Cursor 等支持 OpenAI 接口的客户端中使用。支持**文本对话**（`/v1/chat/completions`）和**图像生成**（`/v1/images/generations`）。
+
+**For English, see [README.md](README.md).**
+
+---
+
+## 架构示意
+
+![Codex Pro API 架构图](architecture-zh.png)
+
+*客户端（Cline / Cursor 等）通过 OpenAI 兼容接口访问本服务，本服务使用已配置的 Codex 账号轮询请求并转发至 Codex 后端（chatgpt.com）。*
+
+---
+
+## 演示说明
+
+**账号页 — 通过「使用 Codex 登录」添加账号（OAuth）：**
+
+![账号页](accounts.png)
+
+**模型页 — 查看可用模型与额度：**
+
+![模型页](models.png)
+
+---
+
+## 如何开始使用
+
+### 方式一：桌面版（推荐）
+
+不想用命令行时，可直接安装桌面版：
+
+1. 打开 [GitHub Releases](https://github.com/violettoolssite/codexProapi/releases)。
+2. 选择最新版本（如 `v1.0.8`），在 **Assets** 中下载 **Windows 安装包**：`Codex Pro API Setup x.x.x.exe`（安装时可选路径、桌面/开始菜单快捷方式）。  
+   **说明：** 桌面版目前仅提供 Windows；macOS / Linux 用户请使用下方「命令行运行」方式。
+3. 安装并运行后，配置页会**直接在软件窗口内打开**，无需使用浏览器；关闭软件后，本地服务会随之关闭。账号与数据保存在您本机的用户数据目录，与安装目录分离。
+
+### 方式二：命令行运行
+
+需要 **Node.js** 18 或更高。在终端执行：
+
+```bash
+npm install -g codex-proapi
+codex-proapi
+```
+
+或在项目目录执行 `npm install` 后运行 `npm start`。然后在浏览器打开 **http://localhost:1455/**。默认端口为 **1455**；全局安装时，账号与用量数据保存在 `~/.codex-proapi/`。
+
+### 本地构建 Windows 安装包（开发者）
+
+桌面版仅提供 **Windows** 安装包。在项目目录执行 `npm run dist:win`，输出在 `release/` 目录。若出现「Cannot create symbolic link」错误，请以**管理员身份**运行终端，或开启**开发者模式**（设置 → 更新和安全 → 开发者选项）后重试。
+
+---
+
+## 在客户端中使用（Cline、Cursor 等）
+
+| 配置项     | 填写内容 |
+|------------|----------|
+| **Base URL** | `http://localhost:1455/v1`（须含 `/v1`；若使用远程或其它端口，请改为对应地址 + `/v1`） |
+| **模型**     | `gpt-5.4` 或 `gpt-5.5`（全部：`gpt-5.5`、`gpt-5.4`、`gpt-5.4-mini`、`gpt-5.3-codex`、`gpt-5.2-codex`、`gpt-5-codex`、`gpt-5`、`gpt-image-2`、`gpt-4`） |
+| **API Key**  | 任意填写（不校验；认证来自您已配置的 Codex 账号） |
+
+**操作步骤：**
+
+1. 在 **http://localhost:1455/** 的「账号」页点击「使用 Codex 登录」添加账号（或使用「添加账号」→「粘贴 JSON」）。
+2. 在 Cline、Cursor 等客户端中按上表设置 **Base URL**（必须带 `/v1`）和**模型**，API Key 随意。
+3. 照常发起对话即可，代理会使用您配置的账号进行轮询。
+
+---
+
+## 登录时提示「地区限制」或 access_denied
+
+若您点击「使用 Codex 登录」后出现**地区限制**、**access_denied** 或类似提示，说明当前网络/地区无法使用该登录方式。您可以：
+
+1. **使用网络代理（VPN）** 后再次点击「使用 Codex 登录」重试。
+2. **改用粘贴 auth.json**：在能正常登录 Codex 的设备上（例如另一台电脑或已开代理的浏览器），打开 `~/.codex/auth.json`（Windows：`%USERPROFILE%\\.codex\\auth.json`）复制全部内容，在本页「账号」→「添加账号」→「粘贴 JSON」中粘贴并添加。
+
+页面上出现此类错误时也会显示上述操作说明。
+
+### 挂了 VPN 仍显示「不支持的地区」怎么办？
+
+若已开启 VPN 仍提示地区限制，可逐项排查：
+
+- **确保「登录页」也走代理**：点击「使用 Codex 登录」后会跳转到 OpenAI 登录页，**该页面的访问也必须走 VPN**。若只有本机部分软件走代理、而浏览器未走代理，登录页仍会按你本机 IP 判定地区。请确认浏览器使用的是系统代理或全局代理，且代理已开启后再点登录。
+- **换节点或换 VPN**：部分代理节点所在国家/地区可能仍被判定为非支持地区，或存在 IP/DNS 泄漏。可尝试更换节点（优先选美国等支持地区）或更换 VPN 服务后重试。
+- **优先改用「粘贴 auth.json」**：在**能正常登录 Codex** 的环境（例如另一台已开代理的电脑、或同一台电脑上已用代理登录过 Codex 的浏览器），打开 `~/.codex/auth.json`（Windows：`%USERPROFILE%\\.codex\\auth.json`），复制全部内容，回到本机 Codex Pro API 的「账号」→「添加账号」→「粘贴 JSON」中粘贴并添加，即可不依赖本机 OAuth 登录。
+
+---
+
+## 后端报 400 "Missing required parameter: tool..."
+
+若接入 OpenCode 等带工具调用的客户端时出现 **400**、**Missing required parameter: 'tool...'**，多为请求里带了 `tools`/`tool_choice` 而后端格式要求不同。本服务已做兼容：无 `tools` 时会传 `tool_choice: none`。若仍报错，可在客户端侧暂时关闭「工具/函数调用」或使用仅对话模式再试。
+
+---
+
+## 请求接口返回 "fetch failed" / proxy_error
+
+若调用 `POST /v1/chat/completions` 时返回 `{"error":{"message":"fetch failed",...}}`，表示**本服务无法连上 Codex 后端**（chatgpt.com），请求在发出去之前就失败了。请逐项检查：
+
+1. **是否已添加账号**：在配置页「账号」中至少添加一个 Codex 账号（OAuth 登录或粘贴 auth.json）。
+2. **本机能否访问 chatgpt.com**：在浏览器或本机执行 `curl -I https://chatgpt.com`，若超时或被墙，需在本机或运行本服务的环境开启 **VPN/代理** 后再试（与「使用 Codex 登录」一样，请求 Codex 的流量也要走代理）。
+3. **桌面版**：若用桌面版，请确保运行桌面版的那台电脑能访问 chatgpt.com（或在该电脑上开 VPN）。
+
+---
+
+## 通过他人提供的链接使用时出现 403
+
+若您是通过别人提供的网址（如 `https://xxx.com`）打开本服务，在点击「使用 Codex 登录」最后一步时出现 **403** 或「Token exchange failed」等提示，属于服务端回调地址配置问题。请联系**提供该链接的服务方**检查域名与 OAuth 回调配置；您本地无需修改。
+
+---
+
+## 功能说明
+
+- **多账号轮询与故障切换** — 请求在您添加的多个账号间轮询；某账号失败时自动切换下一个。
+- **配置页** — 仪表盘、模型（额度）、账号（OAuth 登录 / 粘贴 JSON）、日志、设置（语言、Base URL）。数据每 5 秒自动刷新。
+- **响应式界面** — 支持桌面与手机；小屏下侧栏收起到菜单。
+- **中英双语** — 界面与日志支持英文与简体中文。
+
+本服务支持多轮对话；在客户端按 OpenAI 格式传 `messages` 即可，代理会自动处理。
+
+### 图像生成
+
+通过 `POST /v1/images/generations` 支持图像生成（OpenAI 兼容格式），底层使用 `f/conversation` 协议的 `picture_v2` 通路。支持的模型：`gpt-image-2`（默认）、`gpt-image-1.5`、`gpt-image-1`、`gpt-image-1-mini`。返回**代理 URL**（浏览器可直接打开），缓存有效期 30 分钟。
+
+```bash
+curl -X POST http://localhost:1455/v1/images/generations \
+  -H "Content-Type: application/json" \
+  -d '{"model":"gpt-image-2","prompt":"一只猫","n":1,"size":"1024x1024"}'
+```
+
+参数：`model`、`prompt`、`n`（1–10）、`size`、`quality`（low/medium/high/auto）、`output_format`（png/jpeg/webp）、`background`、`moderation`。
+
+返回格式（OpenAI 兼容，返回代理 URL）：
+```json
+{"created": 1715808000, "data": [{"url": "http://localhost:1455/p/img/abc123..."}]}
+```
+浏览器直接打开 URL 即可查看生成的图像。
+
+---
+
+## 使用 [free.violetteam.cloud](https://free.violetteam.cloud/) 接收验证码
+
+若使用 [free.violetteam.cloud](https://free.violetteam.cloud/) 接收验证邮件（如注册 ChatGPT/Codex 小号），验证码到达可能稍慢，请耐心等待。若长时间未收到，请点击**重发验证码**。
+
+---
+
+## License
+
+MIT. 问题与建议可提交 [GitHub Issues](https://github.com/violettoolssite/codexProapi/issues)。

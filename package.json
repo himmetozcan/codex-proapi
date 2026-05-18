@@ -1,0 +1,97 @@
+{
+  "name": "codex-proapi",
+  "version": "1.0.9",
+  "description": "将 Codex (gpt-5.3-codex) 以 OpenAI 兼容 API 形式暴露，可在 Cline、Cursor 等客户端中使用。桌面版内置配置页，开箱即用。",
+  "author": "violettoolssite",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "bin": {
+    "codex-proapi": "bin/codex-proapi.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "public",
+    "electron"
+  ],
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "electron": "node scripts/run-electron.cjs",
+    "build:app-resources": "node scripts/build-app-resources.cjs",
+    "dist": "npm run build:app-resources && electron-builder",
+    "dist:win": "npm run build:app-resources && electron-builder --win",
+    "dist:mac": "npm run build:app-resources && electron-builder --mac",
+    "dist:linux": "npm run build:app-resources && electron-builder --linux"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "codex-proapi": "^1.0.8",
+    "express": "^4.21.0",
+    "https-proxy-agent": "^9.0.0",
+    "multer": "^2.1.1",
+    "socks-proxy-agent": "^10.0.0"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/violettoolssite/codexProapi.git"
+  },
+  "keywords": [
+    "codex",
+    "openai",
+    "api",
+    "proxy",
+    "chatgpt"
+  ],
+  "license": "MIT",
+  "build": {
+    "appId": "cloud.violet.codex-proapi",
+    "productName": "Codex Pro API",
+    "directories": {
+      "output": "release"
+    },
+    "extraResources": [
+      {
+        "from": "dist/app",
+        "to": "app",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "forceCodeSigning": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.developer-tools"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ]
+    }
+  }
+}
