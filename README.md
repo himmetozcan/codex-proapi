@@ -44,8 +44,8 @@ You need **Node.js** 18 or later. In a terminal:
 Install and run from this public repository:
 
 ```bash
-git clone https://github.com/himmetozcan/codex-proapi-image-edits.git
-cd codex-proapi-image-edits
+git clone https://github.com/himmetozcan/codex-proapi.git
+cd codex-proapi
 npm install
 npm start
 ```
@@ -55,7 +55,7 @@ Then open **http://localhost:1455/** in your browser.
 You can also install the CLI directly from this GitHub repository:
 
 ```bash
-npm install -g github:himmetozcan/codex-proapi-image-edits
+npm install -g github:himmetozcan/codex-proapi
 codex-proapi
 ```
 
